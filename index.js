@@ -22,23 +22,10 @@ class DASHVideoElement extends CustomVideoElement {
     if (val !== this.src) {
       this.setAttribute('src', val);
     }
-  }
-   get options() {
-    // Use the attribute value as the source of truth.
-    // No need to store it in two places.
-    // This avoids needing a to read the attribute initially and update the src.
-    return this.getAttribute('options');
-  }
-
-  set options(val) {
-    // If being set by attributeChangedCallback,
-    // dont' cause an infinite loop
-    if (val !== this.options) {
-      this.setAttribute('options', val);
-    }
-    if (typeof val !="undefined"){
-      let opt = JSON.parse(val);
-      this.dashPlayer.updateSettings({
+    if (this.dashPlayer){
+       let opt = this.getAttribute('options');
+    opt = JSON.parse(opt);
+    this.dashPlayer.updateSettings({
             'streaming': {
                 'stableBufferTime': opt.stableBuffer,
                 'bufferTimeAtTopQualityLongForm': opt.bufferAtTopQuality,
@@ -53,6 +40,21 @@ class DASHVideoElement extends CustomVideoElement {
                 }
             }
         })
+
+    }
+  }
+   get options() {
+    // Use the attribute value as the source of truth.
+    // No need to store it in two places.
+    // This avoids needing a to read the attribute initially and update the src.
+    return this.getAttribute('options');
+  }
+
+  set options(val) {
+    // If being set by attributeChangedCallback,
+    // dont' cause an infinite loop
+    if (val !== this.options) {
+      this.setAttribute('options', val);
     }
   }
 
@@ -60,6 +62,25 @@ class DASHVideoElement extends CustomVideoElement {
   load() {
     this.dashPlayer = window.dashjs.MediaPlayer().create();
     this.dashPlayer.initialize(this.nativeEl, this.src, true);
+    let opt = this.getAttribute('options');
+    opt = JSON.parse(opt);
+    this.dashPlayer.updateSettings({
+            'streaming': {
+                'stableBufferTime': opt.stableBuffer,
+                'bufferTimeAtTopQualityLongForm': opt.bufferAtTopQuality,
+                'abr': {
+                    'minBitrate': {
+                        'video': opt.minBitrate
+                    },
+                    'maxBitrate': {
+                        'video': opt.maxBitrate
+                    },
+                    'limitBitrateByPortal': opt.limitByPortal
+                }
+            }
+        })
+    
+
   }
 
   connectedCallback() {
@@ -80,4 +101,4 @@ if (!window.customElements.get('dash-video')) {
   window.DASHVideoElement = DASHVideoElement;
 }
 
-export default DASHVideoElement;
+export {DASHVideoElement};
