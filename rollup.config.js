@@ -7,7 +7,8 @@ export default {
   input: 'index.js',
   output: {
     file: pkg.main,
-    format: 'es'
+    format: 'umd',
+    name:"dash-video-element"
   },
   plugins: [
     resolve(),
