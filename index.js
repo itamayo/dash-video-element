@@ -23,6 +23,39 @@ class DASHVideoElement extends CustomVideoElement {
       this.setAttribute('src', val);
     }
   }
+   get options() {
+    // Use the attribute value as the source of truth.
+    // No need to store it in two places.
+    // This avoids needing a to read the attribute initially and update the src.
+    return this.getAttribute('options');
+  }
+
+  set options(val) {
+    // If being set by attributeChangedCallback,
+    // dont' cause an infinite loop
+    if (val !== this.src) {
+      this.setAttribute('options', val);
+    }
+    if (typeof val !="undefined"){
+      let opt = JSON.parse(val);
+      this.dashPlayer.updateSettings({
+            'streaming': {
+                'stableBufferTime': opt.stableBuffer,
+                'bufferTimeAtTopQualityLongForm': opt.bufferAtTopQuality,
+                'abr': {
+                    'minBitrate': {
+                        'video': opt.minBitrate
+                    },
+                    'maxBitrate': {
+                        'video': opt.maxBitrate
+                    },
+                    'limitBitrateByPortal': opt.limitByPortal
+                }
+            }
+        })
+    }
+  }
+
 
   load() {
     this.dashPlayer = window.dashjs.MediaPlayer().create();
