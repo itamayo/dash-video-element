@@ -33,7 +33,7 @@ class DASHVideoElement extends CustomVideoElement {
   set options(val) {
     // If being set by attributeChangedCallback,
     // dont' cause an infinite loop
-    if (val !== this.src) {
+    if (val !== this.options) {
       this.setAttribute('options', val);
     }
     if (typeof val !="undefined"){
