@@ -65,13 +65,12 @@ class DASHVideoElement extends CustomVideoElement {
  set autoplay(val){
    if (val !== this.autoplay) {
       this.setAttribute('autoplay', val);
-      setTimeout(()=>{this.dashPlayer.setAutoPlay(val);},2000);
     }
 
  }
   load() {
     this.dashPlayer = window.dashjs.MediaPlayer().create();
-    this.dashPlayer.initialize(this.nativeEl, this.src, true);
+    this.dashPlayer.initialize(this.nativeEl, this.src, this.getAttribute('autoplay')=="true");
     let opt = this.getAttribute('options');
     opt = JSON.parse(opt);
     this.dashPlayer.updateSettings({
