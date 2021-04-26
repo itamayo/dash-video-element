@@ -58,7 +58,17 @@ class DASHVideoElement extends CustomVideoElement {
     }
   }
 
+  get autoplay(){
+   return this.getAttribute('autoplay');
 
+  }
+ set autoplay(val){
+   if (val !== this.autoplay) {
+      this.setAttribute('autoplay', val);
+      this.dashPlayer.setAutoPlay(false);
+    }
+
+ }
   load() {
     this.dashPlayer = window.dashjs.MediaPlayer().create();
     this.dashPlayer.initialize(this.nativeEl, this.src, true);
